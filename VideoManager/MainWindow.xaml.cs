@@ -27,38 +27,6 @@ namespace VideoManager
         public MainWindow()
         {
             InitializeComponent();
-
-            string strConn = @"Data Source=E:\\Data2\\Thumbs\\.temp\\test.db";
-            conn_ = new SQLiteConnection(strConn);
-            conn_.Open();
-
-            SQLiteCommand cmd = conn_.CreateCommand();
-
-            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'video'";
-            object ret = cmd.ExecuteScalar();
-            if (ret == null)
-            {
-                cmd.CommandText = "CREATE TABLE video (id INTEGER PRIMARY KEY AUTOINCREMENT, code CHAR(10), title VARCHAR(256), filename VARCHAR(256), url VARCHAR(1024))";
-                cmd.ExecuteNonQuery();
-            }
-
-            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'actor'";
-            ret = cmd.ExecuteScalar();
-            if (ret == null)
-            {
-                cmd.CommandText = "CREATE TABLE actor (video_id INTEGER, actor VARCHAR(128), PRIMARY KEY(video_id, actor))";
-                cmd.ExecuteNonQuery();
-            }
-
-            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'tag'";
-            ret = cmd.ExecuteScalar();
-            if (ret == null)
-            {
-                cmd.CommandText = "CREATE TABLE tag (video_id INTEGER, tag VARCHAR(128), PRIMARY KEY(video_id, tag))";
-                cmd.ExecuteNonQuery();
-            }
-
-            updateVideoList();
         }
 
         private SQLiteConnection conn_;
@@ -80,6 +48,8 @@ namespace VideoManager
                     string fullPath = System.IO.Path.Combine(dirPath, filename);
                     importVideo(filename, fullPath);
                 }
+
+                updateVideoList();
             }
         }
 
@@ -246,6 +216,52 @@ namespace VideoManager
         private void lvVidoes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void OpenDBFile(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog diag = new OpenFileDialog();
+            diag.Title = "Select DB Files";
+            diag.Filter = "DB File|*.db";
+            diag.FilterIndex = 1;
+            
+            if (diag.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string dbFile = diag.FileName;
+                string strConn = String.Format("Data Source={0}", dbFile);
+                conn_ = new SQLiteConnection(strConn);
+                conn_.Open();
+
+                SQLiteCommand cmd = conn_.CreateCommand();
+
+                cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'video'";
+                object ret = cmd.ExecuteScalar();
+                if (ret == null)
+                {
+                    cmd.CommandText = "CREATE TABLE video (id INTEGER PRIMARY KEY AUTOINCREMENT, code CHAR(10), title VARCHAR(256), filename VARCHAR(256), url VARCHAR(1024))";
+                    cmd.ExecuteNonQuery();
+                }
+
+                cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'actor'";
+                ret = cmd.ExecuteScalar();
+                if (ret == null)
+                {
+                    cmd.CommandText = "CREATE TABLE actor (video_id INTEGER, actor VARCHAR(128), PRIMARY KEY(video_id, actor))";
+                    cmd.ExecuteNonQuery();
+                }
+
+                cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'tag'";
+                ret = cmd.ExecuteScalar();
+                if (ret == null)
+                {
+                    cmd.CommandText = "CREATE TABLE tag (video_id INTEGER, tag VARCHAR(128), PRIMARY KEY(video_id, tag))";
+                    cmd.ExecuteNonQuery();
+                }
+
+                btnOpenVideo.IsEnabled = true;
+
+                updateVideoList();
+            }
         }
 
     }

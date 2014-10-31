@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="VideoManager.MainWindow"
         Title="VideoManager" Height="350" Width="525">
     <Grid>
-        <Button x:Name="btnOpenVideo" Content="Open Video Files" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="200" Click="OpenVideoFiles"/>
+        <Button x:Name="btnOpenVideo" Content="Open Video Files" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="200" Click="OpenVideoFiles" IsEnabled="False"/>
         <ListView x:Name="lvVidoes" HorizontalAlignment="Left" Height="274" Margin="10,35,0,0" VerticalAlignment="Top" Width="497" Cursor="" Grid.ColumnSpan="2" SelectionChanged="lvVidoes_SelectionChanged" ItemsSource="{Binding}" MouseDoubleClick="DoubleClick">
             <ListView.View>
                 <GridView>
@@ -13,6 +13,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button Content="Open DB File" HorizontalAlignment="Left" VerticalAlignment="Top" Width="86" Margin="10,10,0,0" Click="OpenDBFile"/>
 
     </Grid>
 </Window>
