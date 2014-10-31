@@ -57,6 +57,8 @@ namespace VideoManager
                 cmd.CommandText = "CREATE TABLE tag (video_id INTEGER, tag VARCHAR(128), PRIMARY KEY(video_id, tag))";
                 cmd.ExecuteNonQuery();
             }
+
+            updateVideoList();
         }
 
         private SQLiteConnection conn_;
@@ -78,9 +80,15 @@ namespace VideoManager
                     string fullPath = System.IO.Path.Combine(dirPath, filename);
                     importVideo(filename, fullPath);
                 }
-
             }
+        }
 
+        private void updateVideoList()
+        {
+            SQLiteDataAdapter da = new SQLiteDataAdapter("SELECT code, filename FROM video", conn_);
+            System.Data.DataSet ds = new System.Data.DataSet();
+            da.Fill(ds);
+            lvVidoes.DataContext = ds.Tables[0].DefaultView;
         }
 
         class VideoInfo
@@ -163,7 +171,11 @@ namespace VideoManager
 
             tr.Commit();
 
-            System.Windows.MessageBox.Show(String.Format("{0}: ACCEPTED. Code: {1}, Path: {2}", filename, code, ""));
+            // Move file
+            string repoPath = System.IO.Path.Combine("E:\\Data2\\Thumbs\\.temp\\repository", filename);
+            System.IO.File.Move(fullPath, repoPath);
+
+            System.Windows.MessageBox.Show(String.Format("{0}: ACCEPTED. Code: {1}, Path: {2}", filename, code, repoPath));
         }
 
         private bool getVideoInfo(string target_code, VideoInfo info)
@@ -219,6 +231,21 @@ namespace VideoManager
             if (match.Groups.Count < 3) return null;
 
             return String.Format("{0}-{1}", match.Groups[1], match.Groups[2]).ToUpper();
+        }
+
+        private void DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.ListView lv = sender as System.Windows.Controls.ListView;
+            System.Data.DataRowView data = lv.SelectedItem as System.Data.DataRowView;
+            string filename = (string)data.Row.ItemArray[1];
+
+            string fullPath = System.IO.Path.Combine("E:\\Data2\\Thumbs\\.temp\\repository", filename);
+            System.Diagnostics.Process.Start(fullPath);
+        }
+
+        private void lvVidoes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
     }
