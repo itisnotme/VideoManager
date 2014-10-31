@@ -1,8 +1,9 @@
 ﻿<Window x:Class="VideoManager.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="VideoManager" Height="350" Width="525">
     <Grid>
-        
+        <Button x:Name="btnOpenVideo" Content="Open Video Files" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="200" Click="OpenVideoFiles"/>
+
     </Grid>
 </Window>
