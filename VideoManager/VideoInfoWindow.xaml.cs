@@ -17,11 +17,21 @@ namespace VideoManager
     /// <summary>
     /// Interaction logic for VideoInfo.xaml
     /// </summary>
-    public partial class VideoInfo : Window
+    public partial class VideoInfoWindow : Window
     {
-        public VideoInfo()
+        public VideoInfoWindow()
         {
             InitializeComponent();
+        }
+
+        private void ClickOK(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = true;
+        }
+
+        private void ClickNo(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = false;
         }
     }
 }

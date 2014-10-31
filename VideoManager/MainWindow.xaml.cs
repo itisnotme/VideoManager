@@ -96,6 +96,18 @@ namespace VideoManager
                 return;
             }
 
+            // Check info and page to user
+            VideoInfoWindow infoWindow = new VideoInfoWindow();
+            infoWindow.lbCode.Content = code;
+            infoWindow.lbFileName.Content = filename;
+            infoWindow.wbBrowser.Navigate(info.url);
+            Nullable<bool> diagRet = infoWindow.ShowDialog();
+            if (diagRet == false)
+            {
+                System.Windows.MessageBox.Show(String.Format("{0}: REJECTED. User reject", filename));
+                return;
+            }
+
             System.Windows.MessageBox.Show(String.Format("{0}: ACCEPTED. Code: {1}, Path: {2}", filename, code, ""));
         }
 
