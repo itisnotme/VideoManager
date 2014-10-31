@@ -107,7 +107,7 @@ namespace VideoManager
             infoWindow.wbBrowser.Navigate(info.url);
             foreach (string actor in info.actors)
                 infoWindow.lbCast.Content += actor + ", ";
-            foreach(string genre in info.genres)
+            foreach (string genre in info.genres)
                 infoWindow.lbGenre.Content += genre + ", ";
 
             Nullable<bool> diagRet = infoWindow.ShowDialog();
@@ -195,7 +195,7 @@ namespace VideoManager
 
         private string getCode(string filename)
         {
-            Regex reg = new Regex(@"([a-zA-Z]{2,5})\-?([0-9]{3,4})", RegexOptions.IgnoreCase);
+            Regex reg = new Regex(@"([a-zA-Z]{2,5})\-?([0-9]{3,5})", RegexOptions.IgnoreCase);
 
             Match match = reg.Match(filename);
             if (match.Groups.Count < 3) return null;
