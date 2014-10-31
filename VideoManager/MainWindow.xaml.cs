@@ -31,6 +31,32 @@ namespace VideoManager
             string strConn = @"Data Source=E:\\Data2\\Thumbs\\.temp\\test.db";
             conn_ = new SQLiteConnection(strConn);
             conn_.Open();
+
+            SQLiteCommand cmd = conn_.CreateCommand();
+
+            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'video'";
+            object ret = cmd.ExecuteScalar();
+            if (ret == null)
+            {
+                cmd.CommandText = "CREATE TABLE video (id INTEGER PRIMARY KEY AUTOINCREMENT, code CHAR(10), title VARCHAR(256), filename VARCHAR(256), url VARCHAR(1024))";
+                cmd.ExecuteNonQuery();
+            }
+
+            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'actor'";
+            ret = cmd.ExecuteScalar();
+            if (ret == null)
+            {
+                cmd.CommandText = "CREATE TABLE actor (video_id INTEGER, actor VARCHAR(128), PRIMARY KEY(video_id, actor))";
+                cmd.ExecuteNonQuery();
+            }
+
+            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' and name = 'tag'";
+            ret = cmd.ExecuteScalar();
+            if (ret == null)
+            {
+                cmd.CommandText = "CREATE TABLE tag (video_id INTEGER, tag VARCHAR(128), PRIMARY KEY(video_id, tag))";
+                cmd.ExecuteNonQuery();
+            }
         }
 
         private SQLiteConnection conn_;
@@ -101,12 +127,41 @@ namespace VideoManager
             infoWindow.lbCode.Content = code;
             infoWindow.lbFileName.Content = filename;
             infoWindow.wbBrowser.Navigate(info.url);
+            foreach (string actor in info.actors)
+                infoWindow.lbCast.Content += actor + ", ";
+            foreach(string genre in info.genres)
+                infoWindow.lbGenre.Content += genre + ", ";
+
             Nullable<bool> diagRet = infoWindow.ShowDialog();
             if (diagRet == false)
             {
                 System.Windows.MessageBox.Show(String.Format("{0}: REJECTED. User reject", filename));
                 return;
             }
+
+            // Update DB
+            SQLiteTransaction tr = conn_.BeginTransaction();
+            cmd.Transaction = tr;
+
+            cmd.CommandText = String.Format("INSERT INTO video (code, title, filename, url) VALUES ('{0}', '{1}', '{2}', '{3}')", code, info.title, filename, info.url);
+            cmd.ExecuteNonQuery();
+
+            cmd.CommandText = String.Format("SELECT id FROM video WHERE code = '{0}'", code);
+            long id = (long)cmd.ExecuteScalar();
+
+            foreach (string actor in info.actors)
+            {
+                cmd.CommandText = string.Format("INSERT INTO actor VALUES ({0}, '{1}')", id, actor);
+                cmd.ExecuteNonQuery();
+            }
+
+            foreach (string genre in info.genres)
+            {
+                cmd.CommandText = string.Format("INSERT INTO tag VALUES ({0}, '{1}')", id, genre);
+                cmd.ExecuteNonQuery();
+            }
+
+            tr.Commit();
 
             System.Windows.MessageBox.Show(String.Format("{0}: ACCEPTED. Code: {1}, Path: {2}", filename, code, ""));
         }
@@ -119,35 +174,36 @@ namespace VideoManager
 
             HtmlNode dnode = doc.DocumentNode;
             if(dnode.SelectSingleNode("//*[@id=\"rightcolumn\"]/div[1]/text()").InnerText.Contains("ID Search Result")) {
+                HtmlNodeCollection videos = dnode.SelectNodes("//*[@id=\"rightcolumn\"]/div[2]/div/div");
+                if (videos == null) return false;
+
                 bool found = false;
-                foreach (HtmlNode node in dnode.SelectNodes("//*[@id=\"rightcolumn\"]/div[2]/div/div"))
+                foreach (HtmlNode node in videos)
                 {
                     string code = node.SelectSingleNode("./a/div[1]/text()").InnerText;
                     if (code == target_code)
                     {
                         found = true;
 
-                        url = "http://www.javlibrary.com/en" + dnode.SelectSingleNode("./a[1]").Attributes["href"].Value.Substring(1);
+                        url = "http://www.javlibrary.com/en" + node.SelectSingleNode("./a[1]").Attributes["href"].Value.Substring(1);
                         doc = web.Load(url);
                         dnode = doc.DocumentNode;
                         break;
                     }
                 }
 
-                if (false == false) return false;
+                if (found == false) return false;
             }
 
             info.url = url;
             info.title = dnode.SelectSingleNode("//*[@id=\"video_title\"]/h3/a/text()").InnerText;
             
-            dnode.SelectNodes("//span[@class=\"cast\"]/span/a/text()");
             HtmlNodeCollection nodes = dnode.SelectNodes("//span[@class=\"cast\"]/span/a/text()");
             if(nodes != null)
                 foreach(HtmlNode node in nodes)
                     info.actors.Add(node.InnerText);
 
-            dnode.SelectNodes("//span[@class=\"genre\"]/a/text()");
-            nodes = dnode.SelectNodes("//span[@class=\"cast\"]/span/a/text()");
+            nodes = dnode.SelectNodes("//span[@class=\"genre\"]/a/text()");
             if(nodes != null)
                 foreach(HtmlNode node in nodes)
                     info.genres.Add(node.InnerText);

@@ -5,10 +5,14 @@
     <Grid>
         <Button Content="OK" HorizontalAlignment="Left" Margin="950,13,0,0" VerticalAlignment="Top" Width="80" FontSize="14" FontWeight="Bold" Click="ClickOK"/>
         <Button Content="No" HorizontalAlignment="Left" Margin="1038,13,0,0" VerticalAlignment="Top" Width="40" FontSize="14" Click="ClickNo"/>
-        <WebBrowser x:Name="wbBrowser" HorizontalAlignment="Left" Height="626" Margin="10,53,0,0" VerticalAlignment="Top" Width="1272" Grid.ColumnSpan="2"/>
+        <WebBrowser x:Name="wbBrowser" HorizontalAlignment="Left" Height="581" Margin="10,98,0,0" VerticalAlignment="Top" Width="1272"/>
         <Label Content="Filename:" HorizontalAlignment="Center" Margin="373,10,840,0" VerticalAlignment="Top" Width="79" FontSize="14"/>
         <Label Content="Code:" HorizontalAlignment="Center" Margin="219,10,1022,0" VerticalAlignment="Top" Width="51" FontSize="14"/>
-        <Label x:Name="lbFileName" Content="Label" HorizontalAlignment="Center" Margin="438,10,482,0" VerticalAlignment="Top" Width="372" FontSize="14" FontWeight="Bold"/>
+        <Label x:Name="lbFileName" Content="Label" HorizontalAlignment="Center" Margin="438,10,347,0" VerticalAlignment="Top" Width="507" FontSize="14" FontWeight="Bold"/>
         <Label x:Name="lbCode" Content="XXXX-XXXX" HorizontalAlignment="Center" Margin="260,10,941,0" VerticalAlignment="Top" Width="91" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Cast:" HorizontalAlignment="Center" Margin="219,37,1022,0" VerticalAlignment="Top" Width="51" FontSize="14"/>
+        <Label x:Name="lbCast" Content="" HorizontalAlignment="Center" Margin="260,37,347,0" VerticalAlignment="Top" Width="685" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Genre:" HorizontalAlignment="Center" Margin="219,64,1022,0" VerticalAlignment="Top" Width="51" FontSize="14"/>
+        <Label x:Name="lbGenre" Content="" HorizontalAlignment="Center" Margin="260,64,347,0" VerticalAlignment="Top" Width="685" FontSize="14" FontWeight="Bold"/>
     </Grid>
 </Window>
