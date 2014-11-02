@@ -195,7 +195,7 @@ namespace VideoManager
 
         private string getCode(string filename)
         {
-            Regex reg = new Regex(@"([a-zA-Z]{2,5})\-?([0-9]{3,5})", RegexOptions.IgnoreCase);
+            Regex reg = new Regex(@"([a-zA-Z]{2,5})\-?([0-9]{2,5})", RegexOptions.IgnoreCase);
 
             Match match = reg.Match(filename);
             if (match.Groups.Count < 3) return null;
